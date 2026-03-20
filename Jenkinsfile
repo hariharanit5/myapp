@@ -1,8 +1,9 @@
 pipeline {
     agent any
 
-    tools {
-        jdk 'jdk21'
+    environment {
+        JAVA_HOME = '/usr/lib/jvm/java-21-openjdk-amd64'
+        PATH = "${JAVA_HOME}/bin:${env.PATH}"
     }
 
     stages {
@@ -15,6 +16,8 @@ pipeline {
 
         stage('Build') {
             steps {
+                sh 'java -version'
+                sh 'javac -version'
                 sh 'chmod +x gradlew'
                 sh './gradlew clean build'
             }
