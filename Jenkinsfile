@@ -3,7 +3,6 @@ pipeline {
 
     tools {
         jdk 'jdk21'
-        gradle 'gradle'
     }
 
     stages {
@@ -16,19 +15,20 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'gradle clean build'
+                sh 'chmod +x gradlew'
+                sh './gradlew clean build'
             }
         }
 
         stage('Test') {
             steps {
-                sh 'gradle test'
+                sh './gradlew test'
             }
         }
 
         stage('Archive WAR') {
             steps {
-                archiveArtifacts artifacts: 'build/libs/*.war'
+                archiveArtifacts artifacts: 'build/libs/*.war', fingerprint: true
             }
         }
 
@@ -38,6 +38,15 @@ pipeline {
                 cp build/libs/*.war /home/ubuntu/tomcat/webapps/
                 '''
             }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Build & Deployment Successful'
+        }
+        failure {
+            echo '❌ Pipeline Failed'
         }
     }
 }
